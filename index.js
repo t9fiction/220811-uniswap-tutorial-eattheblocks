@@ -17,14 +17,14 @@ const signer = new ethers.Wallet(PRIVATE_KEY_l)
 const account = signer.connect(provider)
 const abiFunction = ['function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)']
 const contractUniSwap = new ethers.Contract('0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',abiFunction, account)
-console.log("account", signer.address)
+// console.log("account", account)
 
 const init = async () => {
 
     const dai = await Fetcher.fetchTokenData(chainId, DAITokenAddress)
     const weth = WETH[chainId]
-    console.log("DAI : ", dai)
-    console.log("WETH : ", weth)
+    // console.log("DAI : ", dai)
+    // console.log("WETH : ", weth)
     const daiwethPair = await Fetcher.fetchPairData(dai, weth)
     const route = new Route([daiwethPair], weth)
     console.log("Quote : ", route.midPrice.toSignificant(6))
@@ -36,8 +36,9 @@ const init = async () => {
 
     // main trading
 
-    const slippageTolerance = new Percent('10', '100')
-    const amountOutMin = trade.minimumAmountOut(slippageTolerance).raw;
+    const slippageTolerance = new Percent(10, 100)
+    const amountOutMin = trade.minimumAmountOut(slippageTolerance);
+    console.log("error : ",amountOutMin)
     const path = [weth.address, dai.address];
     const to = signer.address;
     const deadLine = Math.floor(Date.now() / 1000 + 60 * 10) // 10 minutes
